@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { MEMBER_HIGHLIGHTS } from "@/lib/constants";
+import type { Member } from "@/types/church";
 
 export default function MembersPage() {
   return (
@@ -9,7 +10,7 @@ export default function MembersPage() {
         <p className="text-zinc-600">Visao rapida dos perfis que exigem acompanhamento nesta semana.</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        {MEMBER_HIGHLIGHTS.map((member) => (
+        {MEMBER_HIGHLIGHTS.map((member: Member) => (
           <Card key={member.id}>
             <CardHeader>
               <CardTitle>{member.name}</CardTitle>
