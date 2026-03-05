@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
@@ -12,22 +13,24 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { login } from "@/features/auth/api";
-import type { LoginFormValues } from "@/features/auth/types";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { sanitizeNextPath } from "@/features/auth/model/auth.mappers";
+import type { LoginCredentials } from "@/features/auth/model/auth.types";
 import { validateLoginForm } from "@/lib/validators";
 
-const initialValues: LoginFormValues = {
+const initialValues: LoginCredentials = {
   email: "",
   password: "",
 };
 
 export function LoginForm() {
-  const [values, setValues] = useState<LoginFormValues>(initialValues);
-  const [errors, setErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, error, status, clearError } = useAuth();
+  const [values, setValues] = useState<LoginCredentials>(initialValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof LoginCredentials, string>>>({});
 
-  const handleChange = (field: keyof LoginFormValues, value: string) => {
+  const handleChange = (field: keyof LoginCredentials, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
   };
 
@@ -36,28 +39,29 @@ export function LoginForm() {
     const nextErrors = validateLoginForm(values);
 
     setErrors(nextErrors);
-    setStatusMessage(null);
+    clearError();
 
     if (Object.keys(nextErrors).length > 0) {
       return;
     }
 
-    setIsSubmitting(true);
+    const success = await login(values);
 
-    try {
-      const session = await login(values);
-      setStatusMessage(`Sessao de demonstracao iniciada para ${session.user.name}.`);
-    } finally {
-      setIsSubmitting(false);
+    if (success) {
+      const nextPath = sanitizeNextPath(searchParams.get("next"), "/dashboard");
+      router.push(nextPath);
+      router.refresh();
     }
   };
+
+  const isSubmitting = status === "loading";
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Entrar</CardTitle>
         <CardDescription>
-          Use qualquer email e senha valida para abrir a versao de demonstracao.
+          Entre com as suas credenciais para aceder ao painel administrativo.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -81,9 +85,9 @@ export function LoginForm() {
             value={values.password}
             onChange={(event) => handleChange("password", event.target.value)}
           />
-          {statusMessage ? (
-            <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-              {statusMessage}
+          {error ? (
+            <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
             </p>
           ) : null}
           <Button fullWidth disabled={isSubmitting} type="submit">
@@ -92,7 +96,7 @@ export function LoginForm() {
           <p className="text-center text-sm text-zinc-600">
             Ainda nao tem conta?{" "}
             <Link href="/register" className="font-medium text-zinc-950 underline">
-              Registe a sua igreja
+              Criar conta
             </Link>
           </p>
         </form>

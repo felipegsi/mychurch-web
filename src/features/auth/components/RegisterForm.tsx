@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEventHandler } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -12,8 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { register } from "@/features/auth/api";
-import type { RegisterFormValues } from "@/features/auth/types";
+import type { RegisterFormValues } from "@/features/auth/model/auth.types";
 import { validateRegisterForm } from "@/lib/validators";
 
 const initialValues: RegisterFormValues = {
@@ -34,7 +33,7 @@ export function RegisterForm() {
     setValues((current) => ({ ...current, [field]: value }));
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     const nextErrors = validateRegisterForm(values);
 
@@ -48,8 +47,7 @@ export function RegisterForm() {
     setIsSubmitting(true);
 
     try {
-      const session = await register(values);
-      setStatusMessage(`Conta criada para ${session.user.name}.`);
+      setStatusMessage("Registo ainda nao esta disponivel na versao web.");
     } finally {
       setIsSubmitting(false);
     }

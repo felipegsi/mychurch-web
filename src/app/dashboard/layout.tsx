@@ -7,6 +7,6 @@ type DashboardRouteLayoutProps = {
 
 export default function DashboardRouteLayout({
   children,
-}: DashboardRouteLayoutProps) {
+}: Readonly<DashboardRouteLayoutProps>) {
   return <DashboardLayout>{children}</DashboardLayout>;
 }

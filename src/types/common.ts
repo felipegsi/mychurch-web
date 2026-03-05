@@ -1,9 +1,11 @@
-export type ApiResponse<T> = {
-  data: T;
-  message?: string;
-};
-
-export type Maybe<T> = T | null;
+/**
+ * Tipos compartilhados entre features.
+ */
+export interface ApiError {
+  message: string;
+  code?: string;
+  status?: number;
+}
 
 export type NavigationItem = {
   href: string;

@@ -8,7 +8,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   helperText?: string;
 };
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement, Readonly<InputProps>>(
   ({ className, error, helperText, id, label, name, ...props }, ref) => {
     const inputId = id ?? name;
 

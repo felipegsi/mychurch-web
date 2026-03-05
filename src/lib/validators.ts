@@ -1,11 +1,11 @@
-import type { LoginFormValues, RegisterFormValues } from "@/features/auth/types";
+import type { LoginCredentials, RegisterFormValues } from "@/features/auth/model/auth.types";
 
 export function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-export function validateLoginForm(values: LoginFormValues) {
-  const errors: Partial<Record<keyof LoginFormValues, string>> = {};
+export function validateLoginForm(values: LoginCredentials) {
+  const errors: Partial<Record<keyof LoginCredentials, string>> = {};
 
   if (!values.email.trim()) {
     errors.email = "Informe um email.";

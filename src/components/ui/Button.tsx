@@ -20,7 +20,7 @@ export function Button({
   type = "button",
   variant = "primary",
   ...props
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   return (
     <button
       type={type}
